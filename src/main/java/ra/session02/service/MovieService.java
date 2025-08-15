@@ -5,10 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ra.session02.model.dto.MovieDTO;
 import ra.session02.model.entity.Movie;
 import ra.session02.repository.MovieRepository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 
 @Service
@@ -57,5 +61,20 @@ public class MovieService {
         } else {
             return false;
         }
+    }
+    public List<Movie> getTop3Movies(){
+        return movieRepository.findTop3ByOrderByRatingDesc();
+    }
+    public List <Movie> getMoviesThisMonth(){
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue();
+        int year = today.getYear();
+        return movieRepository.findMoviesThisMonth(month, year);
+    }
+    public List <Movie> getMoviesByTopDirector(){
+        Double maxRating = movieRepository.findMaxRating();
+        String topDirectors = movieRepository.findDirectorsByRating(maxRating).get(0);
+        return movieRepository.findByDirector(topDirectors);
+
     }
 }

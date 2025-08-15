@@ -62,7 +62,7 @@ public class MovieController {
         }
         Movie movie = movieService.addMovie(movieDTO);
         if (movie != null) {
-           redirectAttributes.addFlashAttribute("message", "Thêm thành công");
+            redirectAttributes.addFlashAttribute("message", "Thêm thành công");
             return "redirect:/movies";
         } else {
             model.addAttribute("message", "Lỗi khi thêm phim");
@@ -70,14 +70,27 @@ public class MovieController {
             return "addMovie";
         }
     }
+
     @GetMapping("/delete/{id}")
     public String deleteMovie(@PathVariable long id, RedirectAttributes redirectAttributes) {
-        boolean result= movieService.deleteMovie(id);
+        boolean result = movieService.deleteMovie(id);
         if (result) {
             redirectAttributes.addFlashAttribute("message", "Xóa thành công");
-        }else {
+        } else {
             redirectAttributes.addFlashAttribute("message", "Xóa thất bại");
         }
         return "redirect:/movies";
+    }
+
+    @GetMapping("/statistics")
+    public String showStatistics(Model model) {
+        List<Movie> top3Movies = movieService.getTop3Movies();
+        List<Movie> moviesThisMonth = movieService.getMoviesThisMonth();
+        List<Movie> moviesByTopDirector = movieService.getMoviesByTopDirector();
+
+        model.addAttribute("top3Movies", top3Movies);
+        model.addAttribute("moviesThisMonth", moviesThisMonth);
+        model.addAttribute("moviesByTopDirector", moviesByTopDirector);
+        return "statistics";
     }
 }
